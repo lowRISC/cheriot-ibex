@@ -14,6 +14,8 @@
 `include "prim_assert.sv"
 `include "dv_fcov_macros.svh"
 
+/* verilator lint_off UNUSED */
+
 module ibex_controller #(
   parameter bit CHERIoTEn       = 1'b1,
   parameter bit WritebackStage  = 0,
@@ -1072,3 +1074,5 @@ module ibex_controller #(
   `endif
 
 endmodule
+
+/* verilator lint_on UNUSED */
