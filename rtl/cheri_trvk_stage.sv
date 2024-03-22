@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
+/* verilator lint_off UNUSED */
+
 module cheri_trvk_stage #(
   parameter int unsigned HeapBase  = 32'h2001_0000,
   parameter int unsigned TSMapSize = 1024
@@ -58,10 +60,12 @@ module cheri_trvk_stage #(
   assign base32    = get_bound33(in_cap_q.base, {2{in_cap_q.base_cor}}, in_cap_q.exp, in_data_q);
   assign tsmap_ptr = (base32 - HeapBase) >> 3;
 
+  /* verilator lint_off WIDTH */
   assign tsmap_addr_o  = tsmap_ptr[15:5];
+  /* verilator lint_on WIDTH */
 
   // not a sealling cap and pointing to valid TSMAP range
-  assign range_ok      = (tsmap_ptr[31:5] <= TSMapSize) && 
+  assign range_ok      = (int'(tsmap_ptr[31:5]) <= TSMapSize) &&
                          ~((in_cap_q.cperms[4:3]==2'b00) && (|in_cap_q.cperms[2:0]));
   assign tsmap_cs_o    = (cpu_op_valid_q[0] | tbre_op_valid_q[0]) & cap_good_q[0];
 
@@ -129,3 +133,5 @@ module cheri_trvk_stage #(
   end
 
 endmodule
+
+/* verilator lint_on UNUSED */

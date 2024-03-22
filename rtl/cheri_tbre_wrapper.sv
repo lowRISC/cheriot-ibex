@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
+/* verilator lint_off UNUSED */
 
 module cheri_tbre_wrapper import cheri_pkg::*; #(
   parameter bit          CHERIoTEn   = 1'b1,
@@ -246,3 +247,5 @@ module cheri_tbre_wrapper import cheri_pkg::*; #(
 
 
 endmodule
+
+/* verilator lint_on UNUSED */

@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
+/* verilator lint_off UNUSED */
+
 module cheri_ex import cheri_pkg::*; #(
   parameter bit          WritebackStage = 1'b0,
   parameter bit          MemCapFmt      = 1'b0,
@@ -714,7 +716,7 @@ module cheri_ex import cheri_pkg::*; #(
     setaddr1_outcap = set_address(tfcap1, taddr1, 0, 0);
   end
 
-  bound_req_t bound_req1, bound_req2;
+  bound_req_t bound_req1;
 
   always_comb begin: set_bounds_comb
     logic [31:0] newlen;
@@ -753,34 +755,13 @@ module cheri_ex import cheri_pkg::*; #(
     bound_req1 = CheriCapIT8 ? prep_bound_req_it8 (tfcap3, tmp_addr, newlen) :
                                prep_bound_req (tfcap3, tmp_addr, newlen);
 
-    setbounds_outcap = set_bounds(tfcap3, tmp_addr, bound_req2, req_exact);
+    setbounds_outcap = set_bounds(tfcap3, tmp_addr, bound_req1, req_exact);
 
-    setbounds_rndn_outcap = CheriCapIT8 ? set_bounds_rndn_it8(tfcap3, tmp_addr, bound_req2) :
-                                          set_bounds_rndn(tfcap3, tmp_addr, bound_req2);
+    setbounds_rndn_outcap = CheriCapIT8 ? set_bounds_rndn_it8(tfcap3, tmp_addr, bound_req1) :
+                                          set_bounds_rndn(tfcap3, tmp_addr, bound_req1);
   end
 
-  if (CheriSBND2) begin
-    always_ff @(posedge clk_i or negedge rst_ni) begin
-      if (!rst_ni) begin
-        bound_req2      <= '{0, 0, 0, 0, 0, 0};
-        set_bounds_done <= 1'b0;
-      end else begin
-        bound_req2      <= bound_req1;
-        // set_bounds_done is asserted in the 2nd cycle of execution when SBD2 == 1
-        // note in ibex it actaully is ok to hold set_bounds_done high for both cycles
-        // since the multicycle control logic won't look at ex_valid till the 2nd cycle
-        // however this is the cleaner solution.
-        set_bounds_done <= (cheri_operator_i[CSET_BOUNDS] | cheri_operator_i[CSET_BOUNDS_IMM] |
-                            cheri_operator_i[CSET_BOUNDS_EX] | cheri_operator_i[CRRL] | 
-                            cheri_operator_i[CRAM]) & cheri_exec_id_i & ~set_bounds_done ;
-      end
-    end
-  end else begin
-    assign bound_req2      = bound_req1;
-    assign set_bounds_done = 1'b1;
-  end
-
-
+  assign set_bounds_done = 1'b1;
 
   // address bound and permission checks for
   //    - cheri no-LSU instructions
@@ -1170,3 +1151,5 @@ module cheri_ex import cheri_pkg::*; #(
 
 
 endmodule
+
+/* verilator lint_on UNUSED */
