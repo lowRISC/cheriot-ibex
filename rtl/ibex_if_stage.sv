@@ -16,6 +16,8 @@
 
 `include "prim_assert.sv"
 
+/* verilator lint_off UNUSED */
+
 module ibex_if_stage import ibex_pkg::*; import cheri_pkg::*; #(
   parameter int unsigned DmHaltAddr        = 32'h1A110800,
   parameter int unsigned DmExceptionAddr   = 32'h1A110808,
@@ -805,3 +807,5 @@ module ibex_if_stage import ibex_pkg::*; import cheri_pkg::*; #(
   `ASSERT(IbexInstrAddrUnaligned, instr_req_o |-> (instr_addr_o[1:0] == 2'b00))
 
 endmodule
+
+/* verilator lint_on UNUSED */

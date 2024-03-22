@@ -2,6 +2,9 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
+
+/* verilator lint_off UNUSED */
+
 package cheri_pkg;
 
   // bit field widths
@@ -894,3 +897,5 @@ $display("--- set_bounds:  b1 = %x, t1 = %x, b2 = %x, t2 = %x", base1, top1, bas
   endfunction
  
 endpackage
+
+/* verilator lint_on UNUSED */

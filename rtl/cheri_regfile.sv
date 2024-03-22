@@ -3,6 +3,8 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
+/* verilator lint_off UNUSED */
+
 module cheri_regfile import cheri_pkg::*; #(
   parameter int unsigned NREGS      = 32,
   parameter int unsigned NCAPS      = 32,
@@ -372,3 +374,5 @@ module cheri_regfile import cheri_pkg::*; #(
 
 
 endmodule
+
+/* verilator lint_on UNUSED */

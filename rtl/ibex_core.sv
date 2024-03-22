@@ -199,7 +199,6 @@ module ibex_core import ibex_pkg::*; import cheri_pkg::*; #(
   // IF/ID signals
   logic        dummy_instr_id;
   logic        instr_valid_id;
-  logic        instr_executing_id;
   logic        instr_new_id;
   logic [31:0] instr_rdata_id;                 // Instruction sampled inside IF stage
   logic [31:0] instr_rdata_alu_id;             // Instruction sampled inside IF stage (replicated to
@@ -259,8 +258,6 @@ module ibex_core import ibex_pkg::*; import cheri_pkg::*; #(
   logic        ctrl_busy;
   logic        if_busy;
   logic        lsu_busy;
-
-  logic        lsu_busy_tbre;
 
   // Register File
   logic [4:0]  rf_raddr_a;
@@ -432,7 +429,12 @@ module ibex_core import ibex_pkg::*; import cheri_pkg::*; #(
   logic [11:0]   cheri_ex_err_info;
   logic          cheri_wb_err;
   logic [15:0]   cheri_wb_err_info;
+
+  /* verilator lint_off UNOPTFLAT */
+  /* verilator lint_off IMPERFECTSCH */
   logic [OPDW-1:0] cheri_operator;
+  /* verilator lint_on UNOPTFLAT */
+  /* verilator lint_on IMPERFECTSCH */
 
   logic          rv32_lsu_req;
   logic          rv32_lsu_we;
@@ -441,7 +443,6 @@ module ibex_core import ibex_pkg::*; import cheri_pkg::*; #(
   logic          rv32_lsu_sign_ext;
   logic          rv32_lsu_addr_incr_req;
   logic [31:0]   rv32_lsu_addr_last;
-  logic          rv32_lsu_resp_valid;
 
   logic          cheri_csr_access;
   logic [4:0]    cheri_csr_addr;
@@ -1203,7 +1204,7 @@ module ibex_core import ibex_pkg::*; import cheri_pkg::*; #(
 
     .busy_o(lsu_busy),
 
-    .busy_tbre_o(lsu_busy_tbre),
+    .busy_tbre_o(),
 
     .perf_load_o (perf_load),
     .perf_store_o(perf_store)
