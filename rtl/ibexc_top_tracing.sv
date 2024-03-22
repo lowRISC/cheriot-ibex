@@ -10,12 +10,16 @@
  * Top level module of the ibex RISC-V core with tracing enabled
  */
 
-module ibex_top_tracing import ibex_pkg::*; import cheri_pkg::*; #(
+module ibexc_top_tracing import ibex_pkg::*; import cheri_pkg::*; #(
   parameter int unsigned DmHaltAddr       = 32'h1A110800,
   parameter int unsigned DmExceptionAddr  = 32'h1A110808,
   parameter bit          RV32E            = 1'b0,
   parameter bit          CheriTBRE        = 1'b1,
   parameter bit          CheriStkZ        = 1'b1,
+  parameter bit          DbgTriggerEn     = 1'b1,
+  parameter int unsigned DbgHwBreakNum    = 4,
+  parameter int unsigned MHPMCounterNum   = 0,
+  parameter rv32b_e      RV32B            = RV32BNone,
   parameter int unsigned HeapBase         = 32'h2001_0000,
   parameter int unsigned TSMapBase        = 32'h2004_0000, // 4kB default
   parameter int unsigned TSMapSize        = 1024,          // in words
@@ -63,7 +67,6 @@ module ibex_top_tracing import ibex_pkg::*; import cheri_pkg::*; #(
   output logic                         tsmap_cs_o,
   output logic [15:0]                  tsmap_addr_o,
   input  logic [31:0]                  tsmap_rdata_i,
-  input  logic [6:0]                   tsmap_rdata_intg_i,   // not used in ibexc_top
   input  logic [MMRegDinW-1:0]         mmreg_corein_i,
   output logic [MMRegDoutW-1:0]        mmreg_coreout_o,
   output logic                         cheri_fatal_err_o,
@@ -88,10 +91,13 @@ module ibex_top_tracing import ibex_pkg::*; import cheri_pkg::*; #(
 
   // CPU Control Signals
   input  fetch_enable_t                fetch_enable_i,
-  output logic                         core_sleep_o
+  output logic                         core_sleep_o,
+  output logic                         alert_minor_o,
+  output logic                         alert_major_internal_o,
+  output logic                         alert_major_bus_o
 );
 
-
+`ifdef RVFI
   logic        rvfi_valid;
   logic [63:0] rvfi_order;
   logic [31:0] rvfi_insn;
@@ -137,14 +143,15 @@ module ibex_top_tracing import ibex_pkg::*; import cheri_pkg::*; #(
   assign unused_rvfi_ext_nmi = rvfi_ext_nmi;
   assign unused_rvfi_ext_debug_req = rvfi_ext_debug_req;
   assign unused_rvfi_ext_mcycle = rvfi_ext_mcycle;
+`endif
 
-  ibex_top #(
+  ibexc_top #(
     .DmHaltAddr       (DmHaltAddr       ),
     .DmExceptionAddr  (DmExceptionAddr  ),
-    .MHPMCounterNum   (13  ),
+    .MHPMCounterNum   (MHPMCounterNum),
     .MHPMCounterWidth (40),
-    .DbgTriggerEn     (1'b1),
-    .DbgHwBreakNum    (4),
+    .DbgTriggerEn     (DbgTriggerEn),
+    .DbgHwBreakNum    (DbgHwBreakNum),
     .RV32E            (RV32E),
     .RV32B            (RV32BFull),
     .WritebackStage   (1'b1),
@@ -261,10 +268,6 @@ module ibex_top_tracing import ibex_pkg::*; import cheri_pkg::*; #(
 
 // ibex_tracer relies on the signals from the RISC-V Formal Interface
 // synthesis translate_off
-`ifndef RVFI
-   $fatal("Fatal error: RVFI needs to be defined globally.");
-`endif
-
 `ifdef RVFI
   ibex_tracer #(
     .DataWidth        (DataWidth)
