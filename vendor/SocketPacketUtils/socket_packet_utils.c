@@ -175,6 +175,7 @@ extern inline void serv_socket_init(unsigned long long ptr)
   struct sockaddr_in sockAddr;
   memset(&sockAddr, 0, sizeof(sockAddr));
   sockAddr.sin_family = AF_INET;
+  //TODO add this change as a patch.
   //sockAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
   sockAddr.sin_addr.s_addr = htonl(INADDR_ANY);
   sockAddr.sin_port = htons(s->port);
