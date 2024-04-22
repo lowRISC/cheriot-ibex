@@ -19,8 +19,7 @@ filesets:
       - rtl/ibex_register_file_fpga.sv # FPGA
       - rtl/ibex_register_file_latch.sv # ASIC
       - rtl/cheri_regfile.sv # generic FF-based
-      - rtl/ibex_lockstep.sv
-      - rtl/ibex_top.sv
+      - rtl/ibexc_top.sv
     file_type: systemVerilogSource
 
   files_lint_verilator:

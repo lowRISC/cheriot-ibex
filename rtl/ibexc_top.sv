@@ -17,7 +17,7 @@
 /**
  * Top level module of the ibex RISC-V core
  */
-module ibex_top import ibex_pkg::*; import cheri_pkg::*; #(
+module ibexc_top import ibex_pkg::*; import cheri_pkg::*; #(
   parameter int unsigned DmHaltAddr       = 32'h1A110800,
   parameter int unsigned DmExceptionAddr  = 32'h1A110808,
   parameter bit          DbgTriggerEn     = 1'b1,

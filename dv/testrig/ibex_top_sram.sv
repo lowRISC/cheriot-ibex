@@ -138,36 +138,28 @@ module ibex_top_sram import ibex_pkg::*; #(
 
   // ibex toplevel instantiation
   ibexc_top #(
-    .PMPEnable        ( PMPEnable        ),
-    .PMPGranularity   ( PMPGranularity   ),
-    .PMPNumRegions    ( PMPNumRegions    ),
+    .DmHaltAddr       ( DmHaltAddr       ),
+    .DmExceptionAddr  ( DmExceptionAddr  ),
+    .DbgTriggerEn     ( DbgTriggerEn     ),
+    .DbgHwBreakNum    ( DbgHwBreakNum    ),
     .MHPMCounterNum   ( MHPMCounterNum   ),
     .MHPMCounterWidth ( MHPMCounterWidth ),
     .RV32E            ( RV32E            ),
-    .RV32M            ( RV32M            ),
     .RV32B            ( RV32B            ),
-    .RegFile          ( RegFile          ),
-    .BranchTargetALU  ( BranchTargetALU  ),
-    .ICache           ( ICache           ),
-    .ICacheECC        ( ICacheECC        ),
-    .BranchPredictor  ( BranchPredictor  ),
-    .DbgTriggerEn     ( DbgTriggerEn     ),
-    .DbgHwBreakNum    ( DbgHwBreakNum    ),
     .WritebackStage   ( WritebackStage   ),
+    .BranchPredictor  ( BranchPredictor  ),
     .SecureIbex       ( SecureIbex       ),
-    .ICacheScramble   ( ICacheScramble   ),
-    .RndCnstLfsrSeed  ( RndCnstLfsrSeed  ),
-    .RndCnstLfsrPerm  ( RndCnstLfsrPerm  ),
-    .DmHaltAddr       ( DmHaltAddr       ),
-    .DmExceptionAddr  ( DmExceptionAddr  ),
-    .TestRIG          ( TestRIG          )
+    .CHERIoTEn        ( 1'b1             ),
+    .DataWidth        ( 33               ),
   ) u_ibex_top (
     .clk_i,
     .rst_ni,
 
     .test_en_i,
-    .scan_rst_ni,
     .ram_cfg_i,
+
+    .cheri_pmode_i(1'b1),
+    .cheri_tsafe_en_i(1'b0),
 
     .hart_id_i,
     .boot_addr_i,
@@ -182,6 +174,7 @@ module ibex_top_sram import ibex_pkg::*; #(
 
     // This is connected to the bus
     .data_req_o,
+    .data_is_cap_o(),
     .data_gnt_i,
     .data_rvalid_i,
     .data_we_o,
@@ -192,6 +185,14 @@ module ibex_top_sram import ibex_pkg::*; #(
     .data_rdata_i,
     .data_rdata_intg_i,
     .data_err_i,
+
+    // TS map memory interface
+    .tsmap_cs_o(),
+    .tsmap_addr_o(),
+    .tsmap_rdata_i(32'b0),
+    .mmreg_corein_i(128'b0),
+    .mmreg_coreout_o(),
+    .cheri_fatal_err_o(),
 
     .irq_software_i,
     .irq_timer_i,
@@ -221,10 +222,13 @@ module ibex_top_sram import ibex_pkg::*; #(
     .rvfi_rs2_addr,
     .rvfi_rs3_addr,
     .rvfi_rs1_rdata,
+    .rvfi_rs1_rcap(),
     .rvfi_rs2_rdata,
+    .rvfi_rs2_rcap(),
     .rvfi_rs3_rdata,
     .rvfi_rd_addr,
     .rvfi_rd_wdata,
+    .rvfi_rd_wcap(),
     .rvfi_pc_rdata,
     .rvfi_pc_wdata,
     .rvfi_mem_addr,
@@ -232,21 +236,26 @@ module ibex_top_sram import ibex_pkg::*; #(
     .rvfi_mem_wmask,
     .rvfi_mem_rdata,
     .rvfi_mem_wdata,
+    .rvfi_mem_is_cap(),
+    .rvfi_mem_rcap(),
+    .rvfi_mem_wcap(),
     .rvfi_ext_mip,
     .rvfi_ext_nmi,
     .rvfi_ext_debug_req,
     .rvfi_ext_mcycle,
-    .perf_xret_o,
-    .perf_jump_o,
-    .perf_tbranch_o,
-    .perf_if_cheri_err_o,
+    //.perf_xret_o,
+    //.perf_jump_o,
+    //.perf_tbranch_o,
+    //.perf_if_cheri_err_o,
 `endif
 
     .fetch_enable_i,
+    .core_sleep_o,
     .alert_minor_o,
     .alert_major_internal_o,
     .alert_major_bus_o,
-    .core_sleep_o
+
+    .scan_rst_ni
   );
 
 
