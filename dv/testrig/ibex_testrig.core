@@ -2,7 +2,7 @@ CAPI=2:
 # Copyright lowRISC contributors.
 # Licensed under the Apache License, Version 2.0, see LICENSE for details.
 # SPDX-License-Identifier: Apache-2.0
-name: "lowrisc:ibex:ibex_testrig"
+name: "lowrisc:ibex:cheriot_testrig"
 description: "A simulation testbench using verilator that can be used with TestRIG for random instruction generation"
 
 filesets:
