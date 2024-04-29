@@ -64,18 +64,20 @@ const uint64_t memory_base = 0x80000000;
 const uint64_t memory_size =   0x800000;
 
 int main(int argc, char** argv, char** env) {
-    if (argc != 3) {
-        std::cerr << "Please provide 2 argument (port number and verbosity)" << std::endl;
+    if (argc != 4) {
+        std::cerr << "Please provide 3 argument (localhost, port number and verbosity)" << std::endl;
         exit(-1);
     }
+
+    std::cout << "Arguments: " << argv[0] << ", " << argv[1] << ", " << argv[2] << ", " << argv[3] << std::endl;
 
     Verilated::commandArgs(argc, argv);
     Vibex_top_sram * top = new Vibex_top_sram;
 
-    int verbosity = std::atoi(argv[2]);
+    int verbosity = std::atoi(argv[3]);
 
     // initialize the socket with the input parameters
-    unsigned long long socket = serv_socket_create_nameless(std::atoi(argv[1]));
+    unsigned long long socket = serv_socket_create_nameless(std::atoi(argv[2]));
     serv_socket_init(socket);
 
     // TODO set up initial boot address
