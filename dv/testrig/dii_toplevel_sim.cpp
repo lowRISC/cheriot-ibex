@@ -85,7 +85,7 @@ int main(int argc, char** argv, char** env) {
     top->rst_ni = 1;
     top->test_en_i = 1;
     top->fetch_enable_i = 1;
-    top-> eval();
+    top->eval();
 
     // TestRIG expects cores to start fetching from address 0x80000000
     top->boot_addr_i = 0x80000000;
