@@ -144,10 +144,16 @@ int main(int argc, char** argv, char** env) {
                     received++;
                     if (verbosity > 0) {
                         std::cout << "received new instruction; new count: " << std::dec << received << std::endl;
-                        if (packet->dii_cmd) {
+                        if (packet->dii_cmd == 1) {
                             std::cout << "    cmd: " << std::hex << (int) packet->dii_cmd << " instruction: " << packet->dii_insn << std::endl;
-                        } else {
+                        } else if (packet->dii_cmd == 0x69) {
+                            std::cout << "    cmd: 0x" << std::hex << (int) packet->dii_cmd << " interrupt request: " << std::dec << packet->dii_insn << std::endl;
+                        } else if (packet->dii_cmd == 0x49) {
+                            std::cout << "    cmd: 0x" << std::hex << (int) packet->dii_cmd << " interrupt barrier" << std::endl;
+                        } else if (packet->dii_cmd == 0) {
                             std::cout << "    reset command" << std::endl;
+                        } else {
+                            std::cout << "    unknown cmd: 0x" << std::hex << (int) packet->dii_cmd << std::endl;
                         }
                     }
                 } else {
@@ -308,10 +314,30 @@ int main(int argc, char** argv, char** env) {
                     top->instr_err_i = 0;
                     top->boot_addr_i = 0x00000000;
 
-                    if (instructions[in_count].dii_cmd) {
+                    // Handle interrupt requests before instruction insertion,
+                    // as they do not map to an actual instruction.
+                    while (instructions[in_count].dii_cmd == 0x69) {
+                        if      (instructions[in_count].dii_insn == 3 ) top->irq_software_i = 1;
+                        else if (instructions[in_count].dii_insn == 7 ) top->irq_timer_i    = 1;
+                        else if (instructions[in_count].dii_insn == 11) top->irq_external_i = 1;
+                        if (verbosity > 0) {
+                            std::cout << "interrupt request; in_count: " << std::dec << in_count << std::endl;
+                            std::cout << "    interrupt id: " << std::dec << instructions[in_count].dii_insn << std::endl;
+                        }
+                        in_count++;
+                    }
+
+                    if (instructions[in_count].dii_cmd == 1) {
                         top->instr_rdata_i = instructions[in_count].dii_insn;
                         if (verbosity > 0) {
                             std::cout << "inserting instruction; in_count: " << std::dec << in_count << std::endl;
+                            std::cout << "    instruction: " << std::hex << top->instr_rdata_i << std::endl;
+                        }
+                        in_count++;
+                    } else if (instructions[in_count].dii_cmd == 0x49) {
+                        top->instr_rdata_i = 0x13;
+                        if (verbosity > 0) {
+                            std::cout << "interrupt barrier -> inserting dummy instruction; in_count: " << std::dec << in_count << std::endl;
                             std::cout << "    instruction: " << std::hex << top->instr_rdata_i << std::endl;
                         }
                         in_count++;
