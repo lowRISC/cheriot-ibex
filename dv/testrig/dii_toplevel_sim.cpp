@@ -73,6 +73,7 @@ int main(int argc, char** argv, char** env) {
 
     Verilated::commandArgs(argc, argv);
     Vibex_top_sram * top = new Vibex_top_sram;
+    Verilated::mkdir("logs");
 
     int verbosity = std::atoi(argv[3]);
 
@@ -199,6 +200,7 @@ int main(int argc, char** argv, char** env) {
                 && in_count == received - 1 // this is the last instruction in the trace
                 && !instructions[in_count].dii_cmd // this is a reset command
                ) {
+                VerilatedCov::write("logs/coverage.dat");
                 if (verbosity > 0) {
                     std::cout << "Executing reset" << std::endl;
                 }
@@ -510,6 +512,10 @@ int main(int argc, char** argv, char** env) {
             #endif
         }
     }
+
+    std::cout << "Writing coverage" << std::endl << std::flush;
+    top->final();
+    VerilatedCov::write("logs/coverage.dat");
 
     std::cout << "finished" << std::endl << std::flush;
     delete top;
