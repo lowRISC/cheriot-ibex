@@ -43,7 +43,6 @@ module core_ibex_testrig_tb_top;
   logic [15:0] tsmap_addr;
   logic [31:0] tsmap_rdata;
 
-
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       instr_rvalid <= 1'b0;
@@ -160,7 +159,7 @@ module core_ibex_testrig_tb_top;
   `define IBEX_DII_INSN_PATH dut.u_ibex_top.u_ibex_core.if_stage_i.gen_prefetch_buffer.prefetch_buffer_i.fifo_i.instr_rdata_dii
   `define IBEX_DII_ACK_PATH dut.u_ibex_top.u_ibex_core.if_stage_i.gen_prefetch_buffer.prefetch_buffer_i.fifo_i.instr_ack
 
- // assign dii_if.instr_ack = `IBEX_DII_ACK_PATH & ~dut.u_ibex_top.u_ibex_core.if_stage_i.pc_set_i;
+  //assign dii_if.instr_ack = `IBEX_DII_ACK_PATH & ~dut.u_ibex_top.u_ibex_core.if_stage_i.pc_set_i;
   logic exc_req_d, exc_req_wb;
   logic instr_done;
   logic if_instr_valid;
@@ -185,7 +184,7 @@ module core_ibex_testrig_tb_top;
 
       for (i = 1; i < 16; i++)
         force dut.u_ibex_top.gen_regfile_cheriot.register_file_i.rf_cap_q[i] = MTDC_RESET_CAP;
-            
+
       force dut.u_ibex_top.u_ibex_core.cs_registers_i.u_mepc_csr.rdata_q[31:0] = 32'h8000_0000;
       //force dut.u_ibex_top.u_ibex_core.cs_registers_i.u_mstatus_csr.rdata_q[5:0] = 6'b101100;  //priv_lvl_m
       // cheriot-sail configuration doesn't support PRIV_LVL_U
