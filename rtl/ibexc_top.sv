@@ -139,6 +139,8 @@ module ibexc_top import ibex_pkg::*; import cheri_pkg::*; #(
   output logic                         rvfi_ext_nmi,
   output logic                         rvfi_ext_debug_req,
   output logic [63:0]                  rvfi_ext_mcycle,
+  output logic                         perf_jump_o,
+  output logic                         perf_tbranch_o,
 `endif
 
   // CPU Control Signals
@@ -369,6 +371,8 @@ module ibexc_top import ibex_pkg::*; import cheri_pkg::*; #(
     .rvfi_ext_nmi,
     .rvfi_ext_debug_req,
     .rvfi_ext_mcycle,
+    .perf_jump_o,
+    .perf_tbranch_o,
 `endif
 
     .fetch_enable_i(fetch_enable_buf),
@@ -385,7 +389,7 @@ module ibexc_top import ibex_pkg::*; import cheri_pkg::*; #(
     .ic_tag_rdata_i     (),
     .ic_tag_wdata_o     (),
     .ic_tag_addr_o      (),
-    .ic_tag_write_o     (), 
+    .ic_tag_write_o     (),
     .ic_tag_req_o       ()
   );
 

@@ -253,6 +253,9 @@ int main(int argc, char** argv, char** env) {
                 continue;
             }
 
+            std::cout << "perf_jump " << std::dec << top->perf_jump_o
+                      << ", perf_tbranch " << std::dec << top->perf_tbranch_o
+                      << std::endl;
             // TODO need to track whether an instruction that was input was
             // actually executed or whether it was skipped (branch pred miss,
             // exception, etc)

@@ -37,7 +37,7 @@ module ibex_id_stage import cheri_pkg::*; #(
   input  logic                      rst_ni,
 
   input  logic                      cheri_pmode_i,
-  input  logic                      cheri_tsafe_en_i,    
+  input  logic                      cheri_tsafe_en_i,
   output logic                      ctrl_busy_o,
   output logic                      illegal_insn_o,
 
@@ -68,8 +68,8 @@ module ibex_id_stage import cheri_pkg::*; #(
   input  logic                      illegal_c_insn_i,
   input  logic                      instr_fetch_err_i,
   input  logic                      instr_fetch_err_plus2_i,
-  input  logic                      instr_fetch_cheri_acc_vio_i,         
-  input  logic                      instr_fetch_cheri_bound_vio_i,         
+  input  logic                      instr_fetch_cheri_acc_vio_i,
+  input  logic                      instr_fetch_cheri_bound_vio_i,
 
   input  logic [31:0]               pc_id_i,
 
@@ -143,7 +143,7 @@ module ibex_id_stage import cheri_pkg::*; #(
 
   input  logic                      lsu_load_err_i,
   input  logic                      lsu_store_err_i,
-  input  logic                      lsu_err_is_cheri_i, 
+  input  logic                      lsu_err_is_cheri_i,
 
   // Debug Signal
   output logic                      debug_mode_o,
@@ -631,8 +631,8 @@ module ibex_id_stage import cheri_pkg::*; #(
     .instr_bp_taken_i       (instr_bp_taken_i),
     .instr_fetch_err_i      (instr_fetch_err_i),
     .instr_fetch_err_plus2_i(instr_fetch_err_plus2_i),
-    .instr_fetch_cheri_acc_vio_i  (instr_fetch_cheri_acc_vio_i),       
-    .instr_fetch_cheri_bound_vio_i (instr_fetch_cheri_bound_vio_i),       
+    .instr_fetch_cheri_acc_vio_i  (instr_fetch_cheri_acc_vio_i),
+    .instr_fetch_cheri_bound_vio_i (instr_fetch_cheri_bound_vio_i),
 
     .pc_id_i                (pc_id_i),
 
@@ -731,7 +731,7 @@ module ibex_id_stage import cheri_pkg::*; #(
 
   // assign csr_op_en_o             = csr_access_o & instr_executing & instr_id_done_o;
   // improve timing for CHERIoT mode (instr_id_done has too much logic)
-  assign csr_op_en_o             = csr_access_o & instr_executing & 
+  assign csr_op_en_o             = csr_access_o & instr_executing &
                                    (CHERIoTEn ? instr_first_cycle : instr_id_done_o);
 
   assign alu_operator_ex_o           = alu_operator;
@@ -796,7 +796,7 @@ module ibex_id_stage import cheri_pkg::*; #(
   // completing until it is certain the outstanding access hasn't seen a memory error. This logic
   // ensures only the first cycle of a branch or jump set is sent to the controller to prevent
   // needless extra IF flushes and fetches.
-  assign jump_set        = jump_set_raw        & ~branch_jump_set_done_q;
+  assign jump_set        = ((CHERIoTEn & cheri_pmode_i & ~illegal_c_insn_i) ? jump_set_dec : jump_set_raw)        & ~branch_jump_set_done_q;
   assign branch_set      = branch_set_raw      & ~branch_jump_set_done_q;
 
   // Branch condition is calculated in the first cycle and flopped for use in the second cycle
@@ -1113,7 +1113,7 @@ module ibex_id_stage import cheri_pkg::*; #(
 
     assign stall_ld_hz = outstanding_load_wb_i & (rf_rd_a_hz | rf_rd_b_hz);
 
-    assign stall_cheri_trvk = (CHERIoTEn & cheri_pmode_i & CheriPPLBC) ? 
+    assign stall_cheri_trvk = (CHERIoTEn & cheri_pmode_i & CheriPPLBC) ?
                                ((rf_ren_a && ~rf_reg_rdy_i[rf_raddr_a_o]) |
                                 (rf_ren_b && ~rf_reg_rdy_i[rf_raddr_b_o]) |
                                 (cheri_rf_we && ~ rf_reg_rdy_i[rf_waddr_id_o])) :

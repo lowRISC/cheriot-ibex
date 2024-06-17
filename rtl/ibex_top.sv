@@ -151,6 +151,8 @@ module ibex_top import ibex_pkg::*; import cheri_pkg::*; #(
   output logic                         rvfi_ext_nmi,
   output logic                         rvfi_ext_debug_req,
   output logic [63:0]                  rvfi_ext_mcycle,
+  output logic                         perf_jump_o,
+  output logic                         perf_tbranch_o,
 `endif
 
   // CPU Control Signals
@@ -416,6 +418,8 @@ module ibex_top import ibex_pkg::*; import cheri_pkg::*; #(
     .rvfi_ext_nmi,
     .rvfi_ext_debug_req,
     .rvfi_ext_mcycle,
+    .perf_jump_o,
+    .perf_tbranch_o,
 `endif
 
     .fetch_enable_i(fetch_enable_buf),
@@ -811,7 +815,7 @@ module ibex_top import ibex_pkg::*; import cheri_pkg::*; #(
     logic                         cheri_pmode_local;
     logic                         cheri_tsafe_en_local;
     logic [37:0]                  rf_wcap_vec_local;
-    logic [37:0]                  rf_rcap_a_vec_local; 
+    logic [37:0]                  rf_rcap_a_vec_local;
     logic [37:0]                  rf_rcap_b_vec_local;
     logic [31:0]                  rf_reg_rdy_local;
     logic                         rf_trsv_en_local;
@@ -1064,7 +1068,7 @@ module ibex_top import ibex_pkg::*; import cheri_pkg::*; #(
       .CheriTBRE        (CheriTBRE)
     ) u_ibex_lockstep (
       .clk_i                  (clk),
-      .rst_ni                 (rst_ni),   // should use a different reset tree 
+      .rst_ni                 (rst_ni),   // should use a different reset tree
 
       .hart_id_i              (hart_id_local),
       .boot_addr_i            (boot_addr_local),
@@ -1116,7 +1120,7 @@ module ibex_top import ibex_pkg::*; import cheri_pkg::*; #(
       .tsmap_rdata_i          (tsmap_rdata_local    ),
       .tsmap_rdata_intg_i     (tsmap_rdata_intg_local),
       .mmreg_corein_i         (mmreg_corein_local  ),
-      .mmreg_coreout_i        (mmreg_coreout_local      ), 
+      .mmreg_coreout_i        (mmreg_coreout_local      ),
 
       .ic_tag_req_i           (ic_tag_req_local),
       .ic_tag_write_i         (ic_tag_write_local),
