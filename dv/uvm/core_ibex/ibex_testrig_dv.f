@@ -56,6 +56,12 @@ ${PRJ_DIR}/dv/uvm/core_ibex/common/prim/prim_clock_mux2.sv
 ${PRJ_DIR}/vendor/lowrisc_ip/ip/prim_generic/rtl/prim_generic_flop.sv
 ${PRJ_DIR}/dv/uvm/core_ibex/common/prim/prim_flop.sv
 
+${PRJ_DIR}/vendor/lowrisc_ip/ip/prim/rtl/prim_ram_2p_pkg.sv
+${PRJ_DIR}/vendor/lowrisc_ip/ip/prim/rtl/prim_ram_2p_adv.sv
+${PRJ_DIR}/vendor/lowrisc_ip/ip/prim/rtl/prim_ram_2p_async_adv.sv
+${PRJ_DIR}/vendor/lowrisc_ip/ip/prim_generic/rtl/prim_generic_ram_2p.sv
+${PRJ_DIR}/dv/uvm/core_ibex/common/prim/prim_ram_2p.sv
+
 // ibex CORE RTL files
 +incdir+${PRJ_DIR}/rtl
 ${PRJ_DIR}/rtl/cheri_pkg.sv

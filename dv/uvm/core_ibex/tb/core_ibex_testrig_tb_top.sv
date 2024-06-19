@@ -12,15 +12,31 @@ module core_ibex_testrig_tb_top;
   logic instr_gnt;
   logic instr_rvalid;
 
+  logic        data_req;
+  logic        data_gnt;
+  logic        data_we;
+  logic [3:0]  data_be;
+  logic [31:0] data_addr;
+  logic [31:0] data_wdata;
+  logic        data_rvalid;
+  logic [31:0] data_rdata;
+
+  logic        tsmap_req;
+  logic [31:0] tsmap_addr;
+  logic [31:0] tsmap_rdata;
+
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       instr_rvalid <= 1'b0;
+      data_rvalid  <= 1'b0;
     end else begin
       instr_rvalid <= instr_req;
+      data_rvalid  <= data_req;
     end
   end
 
   assign instr_gnt = instr_req;
+  assign data_gnt  = data_req;
 
   ibex_top_tracing #(
                      .HeapBase        (32'h8000_0000), // Base of memory.
@@ -38,7 +54,7 @@ module core_ibex_testrig_tb_top;
     .ram_cfg_i            ('{0, 0}),
     .hart_id_i            ('0),
     .cheri_pmode_i        (1'b1),
-    .cheri_tsafe_en_i     (1'b0),
+    .cheri_tsafe_en_i     (1'b1),
     .boot_addr_i          (`BOOT_ADDR), // align with spike boot address
     .debug_req_i          (1'b0),
     .fetch_enable_i       (4'b1001),
@@ -49,20 +65,20 @@ module core_ibex_testrig_tb_top;
     .instr_rdata_i        ('0),
     .instr_rdata_intg_i   ('0),
     .instr_err_i          (1'b0),
-    .data_req_o           (),
-    .data_gnt_i           ('0),
-    .data_rvalid_i        ('0),
-    .data_we_o            (),
-    .data_be_o            (),
+    .data_req_o           (data_req),
+    .data_gnt_i           (data_gnt),
+    .data_rvalid_i        (data_rvalid),
+    .data_we_o            (data_we),
+    .data_be_o            (data_be),
     .data_is_cap_o        (),
-    .data_addr_o          (),
-    .data_wdata_o         (),
-    .data_rdata_i         ('0),
+    .data_addr_o          (data_addr),
+    .data_wdata_o         (data_wdata),
+    .data_rdata_i         (data_rdata),
     .data_rdata_intg_i    ('0),
     .data_err_i           (1'b0),
-    .tsmap_cs_o           (),
-    .tsmap_addr_o         (),
-    .tsmap_rdata_i        ('0),
+    .tsmap_cs_o           (tsmap_req),
+    .tsmap_addr_o         (tsmap_addr),
+    .tsmap_rdata_i        (tsmapp_rdata),
     .tsmap_rdata_intg_i   ('0),
     .mmreg_corein_i       ('0),
     .mmreg_coreout_o      (),
@@ -79,6 +95,31 @@ module core_ibex_testrig_tb_top;
     .crash_dump_o         (),
     .scramble_req_o       (),
     .data_wdata_intg_o    ()
+  );
+
+  prim_ram_2p #(
+    .Width           ( 32                   ),
+    .DataBitsPerMask ( 8                    ),
+    .Depth           ( 64 * 1024 * 1024 / 4 ) // 64 MiB
+  ) u_ram (
+    .clk_a_i    (clk),
+    .clk_b_i    (clk),
+    .cfg_i      ('0),
+
+    .a_req_i    (data_req),
+    .a_write_i  (data_we),
+    .a_wmask_i  (data_be),
+    .a_addr_i   (data_addr),
+    .a_wdata_i  (data_wdata),
+    .a_rdata_o  (data_rdata),
+
+    .b_req_i    (tsmap_req),
+    .b_write_i  (1'b0),
+    .b_wmask_i  (4'b0),
+    .b_addr_i   (tsmap_addr),
+    .b_wdata_i  (32'b0),
+    .b_rdata_o  (tsmap_rdata)
+
   );
 
   assign rvfi_if.reset         = ~rst_n;
