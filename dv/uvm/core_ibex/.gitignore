@@ -1,0 +1,7 @@
+.fsm.sch.verilog.xml
+csrc/
+run.log
+sim.vdb/
+vc_hdrs.h
+vcs_testrig_out/
+waves.vpd
