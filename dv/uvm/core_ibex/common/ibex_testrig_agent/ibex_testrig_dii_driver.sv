@@ -78,8 +78,6 @@ class ibex_testrig_dii_driver extends uvm_component;
         end
       end
 
-      $display ("XYZ:dii_cmd=%x, dii_insn=%x", dii_cmd, dii_insn);
-
       dii_stream_begun = 1;
       insn_wait_timeouts = 0;
 
@@ -116,7 +114,6 @@ class ibex_testrig_dii_driver extends uvm_component;
         dii_vif.enable_count_instr();
       end if (dii_cmd == DII_CMD_INSN) begin
         `uvm_info(`gfn, $sformatf("Injecting instruction %x", dii_insn), UVM_HIGH);
-      $display ("UUU:injecting insn=%x", dii_insn);
 
         dii_vif.cb.instr_rdata_dii <= dii_insn;
         @dii_vif.cb;
