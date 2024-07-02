@@ -123,7 +123,6 @@ class ibex_testrig_dii_driver extends uvm_component;
           `uvm_info(`gfn, "Waiting for ack", UVM_HIGH);
         end
 
-      $display ("UUU:Seeing ack insn=%x", dii_insn);
         `uvm_info(`gfn, "Ack seen", UVM_HIGH);
       end
     end
