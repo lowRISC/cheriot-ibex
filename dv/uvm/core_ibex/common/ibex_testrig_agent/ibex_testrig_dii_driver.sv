@@ -19,8 +19,10 @@ class ibex_testrig_dii_driver extends uvm_component;
 
   typedef enum logic [7:0] {
     DII_CMD_RST = 0,
-    DII_CMD_INSN = 1
-    //TODO add interrupt command.
+    DII_CMD_INSN = 1,
+    DII_CMD_SET_VER = 8'h76,
+    DII_CMD_INTR_REQ = 8'h69,
+    DII_CMD_INTR_BAR = 8'h49
   } dii_cmd_e;
 
   virtual core_ibex_dii_intf dii_vif;
@@ -112,6 +114,29 @@ class ibex_testrig_dii_driver extends uvm_component;
         // Restart counting instructions in after reset (the reset itself will have cleared the
         // instruction counts)
         dii_vif.enable_count_instr();
+      end if (dii_cmd == DII_CMD_SET_VER) begin
+        `uvm_info(`gfn, "DII set version command not supported, ignoring", UVM_MEDIUM);
+        // TODO: implement version setting when implementing RVFI V2
+      end if (dii_cmd == DII_CMD_INTR_REQ) begin
+        `uvm_info(`gfn, $sformatf("Interrupt request for MIP[%0d]", dii_insn), UVM_LOW);
+        // TODO: implement interrupt request interface
+        `uvm_info(`gfn, "Interrupt request logic not implemented, ignoring request", UVM_LOW);
+      end if (dii_cmd == DII_CMD_INTR_BAR) begin
+        `uvm_info(`gfn, "Interrupt barrier, injecting NOP", UVM_HIGH);
+
+        dii_vif.disable_count_instr(); // not a real DII instruction so do not count it
+        // TODO: refactor out the duplication of code from the DII_CMD_INSN case
+        dii_vif.cb.instr_rdata_dii <= DII_END_INSN;
+        @dii_vif.cb;
+
+        while (!dii_vif.cb.instr_ack) begin
+          @dii_vif.cb;
+          `uvm_info(`gfn, "Waiting for ack", UVM_HIGH);
+        end
+
+        `uvm_info(`gfn, "Ack seen", UVM_HIGH);
+        dii_vif.enable_count_instr();
+
       end if (dii_cmd == DII_CMD_INSN) begin
         `uvm_info(`gfn, $sformatf("Injecting instruction %x", dii_insn), UVM_HIGH);
 
