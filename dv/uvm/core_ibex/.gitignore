@@ -5,3 +5,4 @@ sim.vdb/
 vc_hdrs.h
 vcs_testrig_out/
 waves.vpd
+rtl_trace.csv
