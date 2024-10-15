@@ -156,7 +156,7 @@ module ibexc_top_tracing import ibex_pkg::*; import cheri_pkg::*; #(
     .DbgTriggerEn     (DbgTriggerEn),
     .DbgHwBreakNum    (DbgHwBreakNum),
     .RV32E            (RV32E),
-    .RV32B            (RV32BFull),
+    .RV32B            (RV32B),
     .WritebackStage   (1'b1),
     .BranchPredictor  (1'b0),
     .CHERIoTEn        (1'b1),
