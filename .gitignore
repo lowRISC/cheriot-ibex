@@ -1,6 +1,3 @@
-# Build output
-build
-
 # Common editor/IDE config and temporary files
 .project
 .vscode/
