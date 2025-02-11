@@ -40,7 +40,9 @@ endfunction
 
 function automatic t_Capability regcap2sail(reg_cap_t capability, logic [31:0] address);
     logic [63:0] bits;
-    bits = {reg2memcap_fmt0(capability)[31:0], address};
+    logic [32:0] get_top_bits;
+    get_top_bits = reg2memcap_fmt0(capability);
+    bits = {get_top_bits[31:0], address};
     return capBitsToCapability(capability.valid, bits);
 endfunction
 
