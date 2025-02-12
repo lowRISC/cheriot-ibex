@@ -30,6 +30,23 @@ Some steps require a lot of RAM and CPU so we recommend closing any other resour
 We've had the proof complete using a machine with 128 GiB of RAM and 32 cores.
 To avoid manually running each step you can also use the `prove_no_liveness` command inside the TCL command interface located below your session window.
 
+## Pregenerated instructions
+
+In case you have pregenerated the SystemVerilog files Jasper needs you dont' need Nix, psgen or fusesoc.
+You can simply run these commands:
+
+```sh
+git clone https://github.com/lowRISC/cheriot-ibex/tree/pregenerated
+cd cheriot-ibex/dv/formal
+mkdir -p build/fusesoc/src/lowrisc_ibex_ibex_formal_0.1
+export LOWRISC_SAIL_SRC=$PWD/build/sail
+jg verify.tcl -allow_unsupported_OS -acquire_proj
+```
+
+Then inside the Jasper interface use the `prove_no_liveness` command:
+```
+[<embedded>] % prove_no_liveness
+```
 
 ## RTL Changes
 - `ResetAll = 1` is required for now (instead of `ResetAll = Lockstep`)
