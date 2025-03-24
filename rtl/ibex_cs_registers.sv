@@ -336,8 +336,15 @@ module ibex_cs_registers import cheri_pkg::*;  #(
 
   logic [31:0] misa_value_masked;
 
-  assign misa_value_masked = MISA_VALUE & ~{8'h0, ~cheri_pmode_i, 23'h0};
-
+  // Set both the X bit and the E bit dynamically based on cheri_pmode_i.
+  assign misa_value_masked = {MISA_VALUE[31:24],
+                              CHERIoTEn ? cheri_pmode_i : MISA_VALUE[23], // X
+                              MISA_VALUE[22:9],
+                              CHERIoTEn ? ~cheri_pmode_i : MISA_VALUE[8], // I
+                              MISA_VALUE[7:5],
+                              CHERIoTEn ? cheri_pmode_i : MISA_VALUE[4], // E
+                              MISA_VALUE[3:0]
+                             };
 
   /////////////
   // CSR reg //
