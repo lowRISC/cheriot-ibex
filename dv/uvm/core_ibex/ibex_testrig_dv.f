@@ -123,4 +123,11 @@ ${PRJ_DIR}/dv/uvm/core_ibex/tests/core_ibex_testrig_test.sv
 ${PRJ_DIR}/dv/uvm/core_ibex/tb/mem_obi_if.sv
 ${PRJ_DIR}/dv/uvm/core_ibex/tb/data_mem_model.sv
 ${PRJ_DIR}/dv/uvm/core_ibex/tb/core_ibex_testrig_tb_top.sv
+      // ${PRJ_DIR}/dv/uvm/core_ibex/fcov/core_ibex_fcov_if.sv
+      // ${PRJ_DIR}/dv/uvm/core_ibex/fcov/core_ibex_fcov_bind.sv
++incdir+${PRJ_DIR}/dv/cheriot/fcov/
+${PRJ_DIR}/dv/cheriot/fcov/module_dv_ext.sv
+${PRJ_DIR}/dv/cheriot/fcov/core_ibex_fcov_if.sv
+${PRJ_DIR}/dv/cheriot/fcov/core_ibex_fcov_bind.sv
+
 

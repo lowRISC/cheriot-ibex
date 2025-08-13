@@ -307,7 +307,8 @@ interface core_ibex_fcov_if import ibex_pkg::*; (
   bit en_uarch_cov;
 
   initial begin
-   void'($value$plusargs("enable_uarch_cov=%d", en_uarch_cov));
+    void'($value$plusargs("enable_uarch_cov=%d", en_uarch_cov));
+    $display("enable_uarch_cov = %d", en_uarch_cov);
   end
 
   `DV_FCOV_INSTANTIATE_CG(uarch_cg, en_uarch_cov)
